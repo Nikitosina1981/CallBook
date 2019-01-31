@@ -1,40 +1,39 @@
 import org.junit.Assert;
 import org.junit.Test;
-import java.util.ArrayList;
 
 public class CallBookTesting
 {
-    CallBook callBook = new CallBook();
-    @Test
-    public void whenPersonIsNull()
-    {
-        callBook.setPerson(null);
-        ArrayList<String> phones = callBook.getPhones();
-        Assert.assertEquals(0,phones.size());
-    }
 
     @Test
     public void whenPersonIsInvalid()
     {
+        CallBook callBook = new CallBook();
         callBook.setPerson("Krokodil");
-        ArrayList<String> phones = callBook.getPhones();
-        Assert.assertEquals(0, phones.size());
+        Assert.assertEquals(0, callBook.getSize());
     }
 
     @Test
     public void whenPersonIsIvanov()
     {
+        CallBook callBook = new CallBook();
         callBook.setPerson("Иванов И.И.");
-        Assert.assertEquals(2, callBook.getPhones().size());
+        Assert.assertEquals(2, callBook.getSize());
     }
 
     @Test
     public void whenPersonIsLodochkin()
     {
+        CallBook callBook = new CallBook();
         callBook.setPerson("Лодочкин И.И.");
-        ArrayList<String> phones = callBook.getPhones();
-        Assert.assertEquals(3, phones.size());
+        Assert.assertEquals(3, callBook.getSize());
     }
 
+    @Test
+    public void whenPersonIsEmpty()
+    {
+        CallBook callBook = new CallBook();
+        callBook.setPerson("");
+        Assert.assertEquals(0, callBook.getSize());
+    }
 
 }
