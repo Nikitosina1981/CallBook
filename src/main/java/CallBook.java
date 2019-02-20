@@ -3,56 +3,60 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class CallBook
 {
-    private HashMap<String, ArrayList<String>> base = new HashMap<String, ArrayList<String>>();
-    private String person;
-    private ArrayList<String> phones = new ArrayList<String>();
+    private List<Person> base; //хранилище
 
-    public ArrayList<String> getPhones()
+    private static CallBook instance; // единственный экземпяр телефонной книги
+
+    public static CallBook getInstance() // создаём и получаем книгу
     {
-        return phones;
+        if (instance==null) instance = new CallBook();
+        return instance;
     }
 
-    public void setPerson(String person)
+   private CallBook() // конструктор с базовыми значениями книги
     {
-        this.person = person;
+        base = new ArrayList<>();
+        base.add(new Person("Иванов И.И.", "+8 800 2000 500", "+8 800 200 600"));
+        base.add(new Person("Петров П.П.", "+8 800 5000 500", "+8 800 660 670"));
+        base.add(new Person("Сидоров И.И.", "+8 800 2000 543"));
+        base.add(new Person("Лодочкин И.И.", "+8 854 2031 500", "+8 811 200 600",
+                "+8 888 8888 888"));
+        base.add(new Person("Пустов В.В."));
     }
+    public String[] requestPhones(String name) //запрос телефонов по готовому ФИО
+    {
 
-   public CallBook()
-    {
-        base.put("Иванов И.И.", new ArrayList<String>(Arrays.asList("+8 800 2000 500", "+8 800 200 600")));
-        base.put("Петров П.П.", new ArrayList<String>(Arrays.asList("+8 800 5000 500", "+8 800 660 670")));
-        base.put("Сидоров И.И.", new ArrayList<String>(Arrays.asList("+8 888 2800 500")));
-        base.put("Лодочкин И.И.", new ArrayList<String>(Arrays.asList("+8 854 2031 500", "+8 811 200 600",
-                "+8 888 8888 888")));
-    }
-    public ArrayList<String> requestPhones()
-    {
-        if (person==null)
+        for(Person person: base)
         {
-            System.out.println("Введите ФИО для информации о телефонных номерах:");
-            try
-            {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-                person = bufferedReader.readLine();
-            }
-            catch (IOException e)
-            {
-                System.out.println("Ошибка ввода! Всё пропало.");
-                System.exit(0);
-            }
+            if (person.getName().equals(name)) return person.getPhones();
         }
-        if (base.containsKey(person)) phones.addAll(base.get(person));
-        return phones;
+        System.out.println("Нет такого в базе.");
+        return requestPhones();
     }
-    public int getSize()
+    public String[] requestPhones() // запрос телефонов через консольный ввод ФИО
     {
-        phones = requestPhones();
-        if (phones==null) return 0;
-        else return phones.size();
+        String name = "";
+        System.out.println("Введите ФИО для информации о телефонных номерах:");
+        try
+        {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            name = bufferedReader.readLine();
+        }
+        catch (IOException e)
+        {
+            System.out.println("Ошибка ввода! Всё пропало.");
+            System.exit(0);
+        }
+        return requestPhones(name);
+    }
+    public static void displayResults(String... phones) // вывод телефонов в консоль
+    {
+        if (phones.length>0) Stream.of(phones).forEach(System.out::println);
+        else System.out.println("У него нет известных телефонов...");
     }
 }
